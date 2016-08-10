@@ -1,103 +1,116 @@
 $(document).ready(function(){
-Physics(function(world){
 
-  var viewWidth = 500;
-  var viewHeight = 300;
+Physics(function (world) {
 
-  var renderer = Physics.renderer('canvas', {
-    el: 'viewport',
-    width: viewWidth,
-    height: viewHeight,
-    meta: false, // don't display meta data
-    styles: {
-        // set colors for the circle bodies
-        'circle' : {
-            strokeStyle: '#351024',
-            lineWidth: 1,
-            fillStyle: '#d33682',
-            angleIndicator: '#351024'
-        }
+    var viewWidth = window.innerWidth/2
+        ,viewHeight = window.innerHeight/2
+        // bounds of the window
+        ,viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight)
+        ,edgeBounce
+        ,renderer
+        ;
+
+    // create a renderer
+    renderer = Physics.renderer('canvas', {
+        el: 'viewport'
+        ,width: viewWidth
+        ,height: viewHeight
+        ,meta: true
+    });
+
+    // add the renderer
+    world.add(renderer);
+    // render on each step
+    world.on('step', function () {
+        world.render();
+    });
+
+    // constrain objects to these bounds
+    edgeBounce = Physics.behavior('edge-collision-detection', {
+        aabb: viewportBounds
+        ,restitution: 0.2
+        ,cof: 1
+    });
+
+    var gravity = Physics.behavior('constant-acceleration', {
+        acc: { x : 0, y: 0.0014 } // this is the default: .0004
+    });
+
+
+    // resize events
+    window.addEventListener('resize', function () {
+
+        viewWidth = window.innerWidth;
+        viewHeight = window.innerHeight;
+
+        renderer.el.width = viewWidth;
+        renderer.el.height = viewHeight;
+
+        viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
+        // update the boundaries
+        edgeBounce.setAABB(viewportBounds);
+
+    }, true);
+
+    // for constraints
+    var rigidConstraints = Physics.behavior('verlet-constraints', {
+        iterations: 10
+    });
+
+    // the "basket"
+    var basket = [];
+    var fpos = window.innerWidth / 6;
+    var epos = window.innerHeight / 6;
+    
+    
+
+    
+    for(i=0;i<20;i++){
+	    box = Physics.body('rectangle', {
+	        x: fpos/2 + Math.random()*fpos
+	        ,y: Math.random()*epos
+	        ,width: 5+Math.random()*50
+	        ,height: 5+Math.random()*50
+		     ,styles: {
+		         strokeStyle: 'white',
+		         lineWidth: 2,
+		         fillStyle: 'black',
+		         angleIndicator: 'white'
+		     }
+	        ,offset:{ x: 0, y: 0 }
+	    });
+	    
+	    world.add(box);
     }
-  });
+    
+   
 
-  // add the renderer
-  world.add( renderer );
-  // render on each step
-  world.on('step', function(){
-    world.render();
-  });
 
-  // bounds of the window
-  var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
+    world.on('render', function( data ){
 
-  // constrain objects to these bounds
-  world.add(Physics.behavior('edge-collision-detection', {
-      aabb: viewportBounds,
-      restitution: 0.2,
-      cof: 0.8
-  }));
+        var renderer = data.renderer;
+        
+    });
 
-  // add a circle
-  world.add(
-      Physics.body('circle', {
-        x: 50, // x-coordinate
-        y: 30, // y-coordinate
-        vx: 0.2, // velocity in x-direction
-        vy: 0.01, // velocity in y-direction
-        radius: 20
-      })
-  );
-  
-	var square = Physics.body('rectangle', {
-	    x: 250,
-	    y: 250,
-	    width: 50,
-	    height: 50
-	});
-world.add( square );
+    
 
-world.add( Physics.body('convex-polygon', {
-    x: 250,
-    y: 50,
-    vx: 0.05,
-    vertices: [
-        {x: 0, y: 80},
-        {x: 60, y: 40},
-        {x: 60, y: -40},
-        {x: 0, y: -80}
-    ]
-}) );
+    // add things to the world
+    world.add([
+        Physics.behavior('interactive', { el: renderer.el })
+        ,Physics.behavior('constant-acceleration')
+        ,Physics.behavior('body-impulse-response')
+        ,Physics.behavior('body-collision-detection')
+        ,Physics.behavior('sweep-prune')
+        ,edgeBounce
+        ,gravity
+    ]);
 
-world.add( Physics.body('convex-polygon', {
-    x: 400,
-    y: 200,
-    vx: -0.02,
-    vertices: [
-        {x: 0, y: 80},
-        {x: 80, y: 0},
-        {x: 0, y: -80},
-        {x: -30, y: -30},
-        {x: -30, y: 30}
-    ]
-}) );
-world.render();
-  // ensure objects bounce when edge collision is detected
-  world.add( Physics.behavior('body-impulse-response') );
+    // subscribe to ticker to advance the simulation
+    Physics.util.ticker.on(function( time ) {
+        world.step( time );
+    });
 
-  // add some gravity
-  world.add( Physics.behavior('constant-acceleration') );
-  
-	world.add( Physics.behavior('body-collision-detection') );
-	
-	world.add( Physics.behavior('sweep-prune') );
-  // subscribe to ticker to advance the simulation
-  Physics.util.ticker.on(function( time, dt ){
-
-      world.step( time );
-  });
-
-  // start the ticker
-  Physics.util.ticker.start();
-
+    // start the ticker
+    Physics.util.ticker.start();
 });
 })
