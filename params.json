@@ -1,6 +1,6 @@
 {
   "name": "Physicsjs",
   "tagline": "A modular, extendable, and easy-to-use physics engine for javascript",
-  "body": "<html>\r\n\t<head>\r\n\t\t<meta charset=\"UTF-8\">\r\n\t\t<title>PhysicsJS</title>\r\n\t\t<script src=\"http://code.jquery.com/jquery-2.0.3.min.js\"></script>\r\n  \t\t<script src=\"physicsjs-full.js\"></script>\r\n  \t\t<script src=\"script.js\"></script>\r\n  \t\t\r\n\t\t<style>\r\n\t\t\tbody {\r\n\t\t\t\tmargin:0px;\r\n\t\t\t}\r\n\t\t\t#canvasid{\r\n\t\t\t\tbackground-color:black;\r\n\t\t\t}\r\n\t\t</style>\r\n\t\t\r\n\t</head>\r\n<body>\r\n\t<canvas id=\"canvasid\" width=\"640\" height=\"480\"></canvas>\r\n</body>\r\n \r\n</html>",
+  "body": "<html>\r\n\t<head>\r\n\t\t<meta charset=\"UTF-8\">\r\n\t\t<title>PhysicsJS</title>\r\n\t\t<script src=\"jquery-2.0.3.min.js\"></script>\r\n  \t\t<script src=\"physicsjs-full.js\"></script>\r\n  \t\t<script src=\"script.js\"></script>\r\n  \t\t\r\n\t\t<style>\r\n\t\t\tbody {\r\n\t\t\t\tmargin:0px;\r\n\t\t\t}\r\n\t\t\t#canvasid{\r\n\t\t\t\tbackground-color:black;\r\n\t\t\t}\r\n\t\t</style>\r\n\t\t\r\n\t</head>\r\n<body>\r\n\t<canvas id=\"canvasid\" width=\"640\" height=\"480\"></canvas>\r\n</body>\r\n \r\n</html>",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
